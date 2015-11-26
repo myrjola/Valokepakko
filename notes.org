@@ -1,0 +1,19 @@
+* Accelerometer usage
+** Button based interface
+1. Hold button
+2. Start drawing image based on relative position
+   - The image is wrapped when hitting the edge, maybe a sound could play when
+     this occurs
+
+The benefit of this is that we have better control when the image starts
+drawing, so that we don't start the exposure in the middle of the animation.
+
+** Automatic interface
+No button press needed. The image is always drawn based on the relative position.
+
+** Integrating the position
+
+- We get the acceleration on one axis
+  - We have to integrate it twice to get the position
+- When we have the relative position we can calculate which frame to show in the
+  animation
