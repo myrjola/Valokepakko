@@ -16,4 +16,5 @@ No button press needed. The image is always drawn based on the relative position
 - We get the acceleration on one axis
   - We have to integrate it twice to get the position
 - When we have the relative position we can calculate which frame to show in the
-  animation
+  animation. We should have some way to measure it in metric units so that we
+  can change the frames in relation to the LED strip dimensions.
