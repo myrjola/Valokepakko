@@ -29,17 +29,18 @@ void loop() {
     } else {
       Serial.println("off");
     }
+    // Small delay to avoid bouncing of the signal.
+    delay(50);
   }
   lastButtonState = buttonState;
 
   if (buttonState == HIGH) {
     // Play a tone
-    tone(PIEZO_PIN, 200, 20);
+    tone(PIEZO_PIN, 200);
     // Light the LED.
     digitalWrite(LED_PIN, HIGH);
-    // Delay a little bit to avoid bouncing.
-    delay(50);
   } else {
+    noTone(PIEZO_PIN);
     digitalWrite(LED_PIN, LOW);
   }
 }
