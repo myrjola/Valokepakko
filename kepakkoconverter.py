@@ -10,7 +10,7 @@ def resize_image(path):
     img = Image.open(path)
     old_width = img.size[0]
     old_height = img.size[1]
-    ratio = 60.0/old_height
+    ratio = float(LED_COUNT)/old_height
     return img.resize((int(old_width*ratio), int(old_height*ratio)),
                       PIL.Image.ANTIALIAS)
 
@@ -21,6 +21,7 @@ def reduce_palette(img):
     """
     return img.convert('P', dither=Image.FLOYDSTEINBERG,
                        palette=Image.ADAPTIVE, colors=256)
+
 
 def get_palette_grouped(img):
     """
@@ -42,12 +43,12 @@ def print_matrix(img):
     """
     palette = get_palette_grouped(img)
     rgb = ["{{{0}, {1}, {2}}}".format(*color) for color in palette]
-    pal_decl = "byte palette[{0}][3] = {{{1}}};".format(len(rgb),
-                                                        ",\n".join(rgb))
+    pal_decl = "const byte PALETTE[{0}][3] PROGMEM = {{{1}}};".format(len(rgb),
+                                                                      ",\n".join(rgb))
     pixels = img.getdata()
     pixels_as_str = ",\n".join(str(pixel) for pixel in pixels)
-    pixels_decl = "byte pixels[{0}] = {{{1}}};".format(len(pixels),
-                                                       pixels_as_str)
+    pixels_decl = "const byte PIXELS[{0}] PROGMEM = {{{1}}};".format(len(pixels),
+                                                                     pixels_as_str)
     print("\n".join([pal_decl, pixels_decl]))
 
 if __name__ == "__main__":
