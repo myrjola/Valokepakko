@@ -62,6 +62,6 @@ void loop() {
     }
     Serial.println("###");
     strip.show();
-    delay(1000);
+    delay(100);
   }
 }

@@ -268,7 +268,7 @@ const RGB PALETTE[PALETTE_SIZE] PROGMEM = {{238, 191, 65},
 const int IMAGE_HEIGHT = 60;
 const int IMAGE_WIDTH = 102;
 const int IMAGE_SIZE = 6120;
-const byte PIXELS[IMAGE_SIZE] PROGMEM = {189,
+const unsigned char PIXELS[IMAGE_SIZE] PROGMEM = {189,
 183,
 182,
 176,
