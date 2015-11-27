@@ -43,13 +43,21 @@ def print_matrix(img):
     """
     palette = get_palette_grouped(img)
     rgb = ["{{{0}, {1}, {2}}}".format(*color) for color in palette]
-    pal_decl = "const byte PALETTE[{0}][3] PROGMEM = {{{1}}};".format(len(rgb),
-                                                                      ",\n".join(rgb))
+    palette_size = len(rgb)
+    pal_size_decl = "const int PALETTE_SIZE = {0};".format(palette_size)
+    pal_decl = "const RGB PALETTE[PALETTE_SIZE] PROGMEM = {{{0}}};".format(
+        ",\n".join(rgb))
     pixels = img.getdata()
+    pixels_size = len(pixels)
+    image_height_decl = "const int IMAGE_HEIGHT = {0};".format(LED_COUNT)
+    image_width_decl = "const int IMAGE_WIDTH = {0};".format(
+        int(pixels_size / LED_COUNT))
+    pixels_size_decl = "const int IMAGE_SIZE = {0};".format(pixels_size)
     pixels_as_str = ",\n".join(str(pixel) for pixel in pixels)
-    pixels_decl = "const byte PIXELS[{0}] PROGMEM = {{{1}}};".format(len(pixels),
-                                                                     pixels_as_str)
-    print("\n".join([pal_decl, pixels_decl]))
+    pixels_decl = "const byte PIXELS[IMAGE_SIZE] PROGMEM = {{{0}}};".format(
+        pixels_as_str)
+    print("\n".join([pal_size_decl, pal_decl, image_height_decl,
+                     image_width_decl, pixels_size_decl, pixels_decl]))
 
 if __name__ == "__main__":
     image_path = "img/grin.png"
