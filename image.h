@@ -1,12 +1,12 @@
 #include <avr/pgmspace.h>
 
 typedef struct RGB_struct {
-  byte r;
-  byte g;
-  byte b;
+  unsigned char r;
+  unsigned char g;
+  unsigned char b;
 } RGB;
 
-// Copypaste image from kepakkoconverter.py below.
+// Copypaste image from kepakkoconverter.py below
 
 const int PALETTE_SIZE = 256;
 const RGB PALETTE[PALETTE_SIZE] PROGMEM = {{238, 191, 65},

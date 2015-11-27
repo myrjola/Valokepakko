@@ -43,8 +43,7 @@ void setup() {
 }
 
 void loop() {
-  /* for (int x = 0; x < IMAGE_WIDTH; x++) { */
-  int x = 0;
+  for (int x = 0; x < IMAGE_WIDTH; x++) {
     for (int y = 0; y < IMAGE_HEIGHT; y++) {
       int pixelIndex = x + y * IMAGE_WIDTH;
       int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
@@ -64,5 +63,5 @@ void loop() {
     Serial.println("###");
     strip.show();
     delay(1000);
-  /* } */
+  }
 }
