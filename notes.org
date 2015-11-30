@@ -47,11 +47,11 @@ The Arduino has three memory spaces:
 
 The LED strip supports 24-bit RGB-colors. The strip has 60 programmable LEDs,
 that means that the uncompressed storage space needed for lighting the whole
-strip is src_calc{60*24/8/1000} kb. If we want to store a 60 \times 60 pixel
-image we will need src_calc{60*60*24/8/1000} kb.
+strip is src_calc{60*24/8/1024} kb. If we want to store a 60 \times 60 pixel
+image we will need src_calc{60*60*24/8/1024} kb.
 
 One way around this is to decrease the available colors. The idea is to define a
 palette array with 256 colors, they can be referenced with one byte. So the
 image becomes an array of bytes, which reference the palette array. Now the
 storage requirement for one 60 \times 60 pixel image becomes
-src_calc{(60*60 + 3*256)/1000} kb.
+src_calc{(60*60 + 3*256)/1024} kb.
