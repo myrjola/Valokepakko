@@ -1,5 +1,6 @@
 * Accelerometer usage
 ** Button based interface
+
 1. Hold button
 2. Start drawing image based on relative position
    - The image is wrapped when hitting the edge, maybe a sound could play when
@@ -18,3 +19,39 @@ No button press needed. The image is always drawn based on the relative position
 - When we have the relative position we can calculate which frame to show in the
   animation. We should have some way to measure it in metric units so that we
   can change the frames in relation to the LED strip dimensions.
+
+
+* Memory limitations
+
+** Available memory in the Arduino
+
+We will have problems with the limited memory available on the Arduino.
+
+The Arduino has three memory spaces:
+- Flash
+  - 32kb - 5kb for the bootloader
+  - program code
+  - non-volatile
+  - Variables declared in code isn't automatically added here
+    - You have to use avr/pgmspace.h. See [[https://www.arduino.cc/en/Reference/PROGMEM][PROGMEM tutorial]].
+- EEPROM
+  - 1kb
+  - non-volatile
+  - Too small for images
+- SRAM
+  - 2kb
+  - volatile
+  - includes the heap and stack
+  - Too small for images
+** Compressing images
+
+The LED strip supports 24-bit RGB-colors. The strip has 60 programmable LEDs,
+that means that the uncompressed storage space needed for lighting the whole
+strip is src_calc{60*24/8/1000} kb. If we want to store a 60 \times 60 pixel
+image we will need src_calc{60*60*24/8/1000} kb.
+
+One way around this is to decrease the available colors. The idea is to define a
+palette array with 256 colors, they can be referenced with one byte. So the
+image becomes an array of bytes, which reference the palette array. Now the
+storage requirement for one 60 \times 60 pixel image becomes
+src_calc{(60*60 + 3*256)/1000} kb.
