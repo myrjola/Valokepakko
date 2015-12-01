@@ -1,3 +1,7 @@
+#+TITLE: Valokepakko notes
+
+These notes are best read on Github or [[http://orgmode.org/manual/HTML-Export-commands.html#HTML-Export-commands][exported to HTML with Emacs org-mode]].
+
 * Accelerometer usage
 ** Button based interface
 
@@ -41,13 +45,43 @@ Use a led or speaker to show every tick.
 
 One button to start calibration.
 
-How to read the signal?
+***** How to read the signal?
+
+We get values for X and Y with the demo code the values are ~5000 at no tilt and
+~3700 and ~6200 at full tilt. There is some noise in the signal.
+
+**** Viability
+
+According to [[http://www.chrobotics.com/library/accel-position-velocity][this source]] using an accelerometer won't be viable for speed and position
+calculation.
+
+Orientation seems to be viable according to [[http://learn.parallax.com/kickstart/28017][the manufacturer]].
 
 **** Memsic 2125 Dual-axis Accelerometer
+
+***** Resources
 
 https://www.parallax.com/product/28017
 
 Good resource for Arduino: http://learn.parallax.com/kickstart/28017
+
+
+***** Reading the study guide
+
+Chapter 3 in [[https://www.parallax.com/sites/default/files/downloads/28029-Smart-Sensors-Text-v1.0.pdf][Smart Sensors and Applications]]
+
+- Use atan to get the angle
+
+*** Orientation of a wheel to distance travelled
+
+Install the accelerometer on a wheel and calculate the orientation based on the
+angle deltas.
+
+Problems:
+- Rotation will be hard on the wires
+- All the problems of the wheel-based approach:
+  - Cumbersome, needs more equipment
+  - Can't move up and down
 
 
 * Memory limitations

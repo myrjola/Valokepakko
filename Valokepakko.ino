@@ -1,6 +1,7 @@
 #include <avr/pgmspace.h>
 
 #include "image.h"
+#include "math.h"
 
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
@@ -9,7 +10,8 @@
 
 const int LED_PIN = 6;
 
-// Accelerometer pins
+// We use the Memsic 2125 Dual-axis Accelerometer.
+// Accelerometer pins:
 const int ACCEL_X_PIN = 2;
 const int ACCEL_Y_PIN = 3;
 
@@ -46,6 +48,9 @@ void setup() {
   Serial.begin(9600);
 }
 
+// Sensor reading when there is no tilt on the accelerometer.
+const int NO_TILT = 5000;
+
 void loop() {
   /**********************/
   /* Accelerometer code */
@@ -53,14 +58,19 @@ void loop() {
 
   // variables to read the pulse widths:
   int pulseX, pulseY;
+  float angle;
 
-  pulseX = pulseIn(xIn,HIGH);  // Read X pulse
-  pulseY = pulseIn(yIn,HIGH);  // Read Y pulse
+  pulseX = pulseIn(ACCEL_X_PIN, HIGH);
+  pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
+
+  angle = atan2(pulseX-5000, pulseY-5000);
 
   // Display result
-  Serial.print(pulseX);	       // Display X and Y values
+  Serial.print(pulseX);
   Serial.print("\t");
-  Serial.println(pulseY);
+  Serial.print(pulseY);
+  Serial.print("\t");
+  Serial.println(angle);
 
   delay(200);
 
