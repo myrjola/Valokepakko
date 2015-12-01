@@ -63,7 +63,7 @@ void loop() {
   pulseX = pulseIn(ACCEL_X_PIN, HIGH);
   pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
 
-  angle = atan2(pulseX-5000, pulseY-5000);
+  angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
 
   // Display result
   Serial.print(pulseX);
