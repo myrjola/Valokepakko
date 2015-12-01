@@ -73,14 +73,12 @@ void loop() {
 
   angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
 
-  // Display result
-  /* Serial.print(pulseX); */
-  /* Serial.print("\t"); */
-  /* Serial.print(pulseY); */
-  /* Serial.print("\t"); */
-  /* Serial.println(mapfloat(angle, -PI, PI, 0.0, 360.0)); */
-
-  delay(200);
+  /* Display result */
+  Serial.print(pulseX);
+  Serial.print("\t");
+  Serial.print(pulseY);
+  Serial.print("\t");
+  Serial.println(mapfloat(angle, -PI, PI, 0.0, 360.0));
 
   for (int led = 0; led < LEDS; led++) {
     const float originX = IMAGE_WIDTH / 2;
@@ -90,41 +88,36 @@ void loop() {
                                   originY*originY);
 
     int h = mapfloat(led, 0.0, float(LEDS), 0, hypotenuse);
-    Serial.print(h);
-    Serial.print("\t");
 
     int deltaX = cos(angle) * h;
     int deltaY = sin(angle) * h;
 
-    Serial.print(deltaX);
-    Serial.print("\t");
-    Serial.println(deltaY);
+    // Lookup the pixel
+    int x = int(originX + deltaX);
+    int y = int(originY + deltaY);
+
+    if (led == 59) {
+      Serial.print(x);
+      Serial.print("\t");
+      Serial.println(y);
+    }
+
+    if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
+      rgb = {0, 0, 0};
+    } else {
+      int pixelIndex = x + y * IMAGE_WIDTH;
+      int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
+      memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
+    }
+    /* Serial.print(rgb.r); */
+    /* Serial.print(", "); */
+    /* Serial.print(rgb.g); */
+    /* Serial.print(", "); */
+    /* Serial.println(rgb.b); */
+    uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b);
+    strip.setPixelColor(led, c);
   }
+  /* Serial.println("###"); */
 
-
-
-  /******************/
-  /* Led strip code */
-  /******************/
-
-  /* for (int x = 0; x < IMAGE_WIDTH; x++) { */
-  /*   for (int y = 0; y < IMAGE_HEIGHT; y++) { */
-  /*     int pixelIndex = x + y * IMAGE_WIDTH; */
-  /*     int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex); */
-  /*     memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB)); */
-  /*     Serial.print(pixelIndex); */
-  /*     Serial.print(": "); */
-  /*     Serial.print(colorIndex); */
-  /*     Serial.print(": "); */
-  /*     Serial.print(rgb.r); */
-  /*     Serial.print(", "); */
-  /*     Serial.print(rgb.g); */
-  /*     Serial.print(", "); */
-  /*     Serial.println(rgb.b); */
-  /*     uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b); */
-  /*     strip.setPixelColor(y, c); */
-  /*   } */
-  /*   Serial.println("###"); */
-  /*   strip.show(); */
-  /* } */
+  strip.show();
 }
