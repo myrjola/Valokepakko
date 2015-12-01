@@ -17,6 +17,7 @@ No button press needed. The image is always drawn based on the relative position
 
 ** Orientation based interface
 
+*** Basic idea
 Hold the LED strip vertical and tilt it to either side.
 
 Some considerations:
@@ -25,7 +26,10 @@ Some considerations:
    - Calculate them in the Python script?
    - Calculate them on the fly?
 
-* Accelerometer usage
+*** Orientation accuracy
+
+In [[https://github.com/myrjola/Valokepakko/commit/32c92aa023f4dfb88f160cd728e6584ffcac206a][32c92aa]] I tested the accuracy in degrees. The noise seems to be ±0.5 degrees.
+So we can say we have ~1 degree accuracy.
 
 ** Integrating the position
 
