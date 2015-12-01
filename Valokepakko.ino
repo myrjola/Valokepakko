@@ -15,6 +15,8 @@ const int LED_PIN = 6;
 const int ACCEL_X_PIN = 2;
 const int ACCEL_Y_PIN = 3;
 
+const int LEDS = 60;
+
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
 // Parameter 3 = pixel type flags, add together as needed:
@@ -22,7 +24,7 @@ const int ACCEL_Y_PIN = 3;
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, LED_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // Variable to store the color from PROGMEM.
 RGB rgb;
@@ -72,13 +74,34 @@ void loop() {
   angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
 
   // Display result
-  Serial.print(pulseX);
-  Serial.print("\t");
-  Serial.print(pulseY);
-  Serial.print("\t");
-  Serial.println(mapfloat(angle, -PI, PI, 0.0, 360.0));
+  /* Serial.print(pulseX); */
+  /* Serial.print("\t"); */
+  /* Serial.print(pulseY); */
+  /* Serial.print("\t"); */
+  /* Serial.println(mapfloat(angle, -PI, PI, 0.0, 360.0)); */
 
   delay(200);
+
+  for (int led = 0; led < LEDS; led++) {
+    const float originX = IMAGE_WIDTH / 2;
+    const float originY = IMAGE_HEIGHT - 1;
+
+    const float hypotenuse = sqrt(originX*originX +
+                                  originY*originY);
+
+    int h = mapfloat(led, 0.0, float(LEDS), 0, hypotenuse);
+    Serial.print(h);
+    Serial.print("\t");
+
+    int deltaX = cos(angle) * h;
+    int deltaY = sin(angle) * h;
+
+    Serial.print(deltaX);
+    Serial.print("\t");
+    Serial.println(deltaY);
+  }
+
+
 
   /******************/
   /* Led strip code */
