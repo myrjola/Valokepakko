@@ -7,7 +7,11 @@
   #include <avr/power.h>
 #endif
 
-#define PIN 6
+const int LED_PIN = 6;
+
+// Accelerometer pins
+const int ACCEL_X_PIN = 2;
+const int ACCEL_Y_PIN = 3;
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -16,7 +20,7 @@
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(60, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 // Variable to store the color from PROGMEM.
 RGB rgb;
@@ -43,25 +47,45 @@ void setup() {
 }
 
 void loop() {
-  for (int x = 0; x < IMAGE_WIDTH; x++) {
-    for (int y = 0; y < IMAGE_HEIGHT; y++) {
-      int pixelIndex = x + y * IMAGE_WIDTH;
-      int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
-      memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
-      Serial.print(pixelIndex);
-      Serial.print(": ");
-      Serial.print(colorIndex);
-      Serial.print(": ");
-      Serial.print(rgb.r);
-      Serial.print(", ");
-      Serial.print(rgb.g);
-      Serial.print(", ");
-      Serial.println(rgb.b);
-      uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b);
-      strip.setPixelColor(y, c);
-    }
-    Serial.println("###");
-    strip.show();
-    delay(100);
-  }
+  /**********************/
+  /* Accelerometer code */
+  /**********************/
+
+  // variables to read the pulse widths:
+  int pulseX, pulseY;
+
+  pulseX = pulseIn(xIn,HIGH);  // Read X pulse
+  pulseY = pulseIn(yIn,HIGH);  // Read Y pulse
+
+  // Display result
+  Serial.print(pulseX);	       // Display X and Y values
+  Serial.print("\t");
+  Serial.println(pulseY);
+
+  delay(200);
+
+  /******************/
+  /* Led strip code */
+  /******************/
+
+  /* for (int x = 0; x < IMAGE_WIDTH; x++) { */
+  /*   for (int y = 0; y < IMAGE_HEIGHT; y++) { */
+  /*     int pixelIndex = x + y * IMAGE_WIDTH; */
+  /*     int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex); */
+  /*     memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB)); */
+  /*     Serial.print(pixelIndex); */
+  /*     Serial.print(": "); */
+  /*     Serial.print(colorIndex); */
+  /*     Serial.print(": "); */
+  /*     Serial.print(rgb.r); */
+  /*     Serial.print(", "); */
+  /*     Serial.print(rgb.g); */
+  /*     Serial.print(", "); */
+  /*     Serial.println(rgb.b); */
+  /*     uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b); */
+  /*     strip.setPixelColor(y, c); */
+  /*   } */
+  /*   Serial.println("###"); */
+  /*   strip.show(); */
+  /* } */
 }
