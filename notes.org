@@ -14,11 +14,40 @@ No button press needed. The image is always drawn based on the relative position
 
 ** Integrating the position
 
+*** Get the position
 - We get the acceleration on one axis
   - We have to integrate it twice to get the position
 - When we have the relative position we can calculate which frame to show in the
   animation. We should have some way to measure it in metric units so that we
   can change the frames in relation to the LED strip dimensions.
+
+*** What about using the speed?
+
+**** Calibration stage
+
+The problem we noticed during the demo session on the lecture 1.12.2015 is that
+you need to give the sensor a sudden kick when you start moving. Calmly starting
+the motion won't be noticed in all the noise. So maybe we need some kind of
+calibration stage.
+
+1. Push button to start calibration
+2. Kick the strip into motion (not a real kick, just a fast impulse)
+3. Determine the speed from the kick
+4. Start drawing the image using constant speed
+
+**** Calibration demo
+
+Use a led or speaker to show every tick.
+
+One button to start calibration.
+
+How to read the signal?
+
+**** Memsic 2125 Dual-axis Accelerometer
+
+https://www.parallax.com/product/28017
+
+Good resource for Arduino: http://learn.parallax.com/kickstart/28017
 
 
 * Memory limitations
