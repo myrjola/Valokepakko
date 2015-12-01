@@ -25,7 +25,6 @@ Some considerations:
    - Calculate them in the Python script?
    - Calculate them on the fly?
 
-
 * Accelerometer usage
 
 ** Integrating the position

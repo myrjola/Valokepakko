@@ -51,6 +51,12 @@ void setup() {
 // Sensor reading when there is no tilt on the accelerometer.
 const int NO_TILT = 5000;
 
+// Same as the built in map function but for floats
+float mapfloat(float x, float in_min, float in_max, float out_min, float out_max)
+{
+ return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 void loop() {
   /**********************/
   /* Accelerometer code */
@@ -70,7 +76,7 @@ void loop() {
   Serial.print("\t");
   Serial.print(pulseY);
   Serial.print("\t");
-  Serial.println(angle);
+  Serial.println(mapfloat(angle, -PI, PI, 0.0, 360.0));
 
   delay(200);
 
