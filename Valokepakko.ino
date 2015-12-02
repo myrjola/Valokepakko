@@ -1,7 +1,7 @@
 #include <avr/pgmspace.h>
+#include <math.h>
 
 #include "image.h"
-#include "math.h"
 
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
