@@ -17,9 +17,9 @@
 /*                                                  */
 /* Uncomment only ONE line at a time.               */
 /****************************************************/
-// #define TIMER;
+/* #define TIMER; */
 #define TILT;
-// #define WHEEL;
+/* #define WHEEL; */
 
 const int LED_PIN = 6;
 
@@ -79,9 +79,10 @@ uint32_t lookupColor(int pixelIndex) {
     int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
     memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
   }
-  uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b);
+  return strip.Color(rgb.r, rgb.g, rgb.b);
 }
 
+// Lookup the pixel's color for the tilt based interface.
 uint32_t tiltColorLookup(int led, float angle) {
     const float originX = IMAGE_WIDTH / 2;
     const float originY = IMAGE_HEIGHT - 1;
@@ -94,9 +95,6 @@ uint32_t tiltColorLookup(int led, float angle) {
     int deltaX = cos(angle) * h;
     int deltaY = sin(angle) * h;
 
-    /****************************/
-    /* Lookup the pixel's color */
-    /****************************/
     int x = int(originX + deltaX);
     int y = int(originY + deltaY);
     int pixelIndex = x + y * IMAGE_WIDTH;
@@ -104,7 +102,15 @@ uint32_t tiltColorLookup(int led, float angle) {
     if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
       pixelIndex = -1;
     }
-    uint32_t c = lookupColor(pixelIndex);
+    return lookupColor(pixelIndex);
+}
+
+// Lookup the pixel's color for the wheel based interface.
+uint32_t wheelColorLookup(int led, float angle) {
+    int x = int(mapfloat(angle, -PI, PI, 0.0, float(IMAGE_WIDTH-1)));
+
+    int pixelIndex = x + led * IMAGE_WIDTH;
+    return lookupColor(pixelIndex);
 }
 
 void loop() {
@@ -125,9 +131,13 @@ void loop() {
   /******************/
 
   for (int led = 0; led < LEDS; led++) {
+    uint32_t c;
 #ifdef TILT
-    uint32_t c = tiltColorLookup(led, angle);
+    c = tiltColorLookup(led, angle);
 #endif /* TILT */
+#ifdef WHEEL
+    c = wheelColorLookup(led, angle);
+#endif /* WHEEL */
 
     strip.setPixelColor(led, c);
   }
