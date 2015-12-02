@@ -80,35 +80,12 @@ void loop() {
   Serial.print("\t");
   Serial.println(mapfloat(angle, -PI, PI, 0.0, 360.0));
 
+  int x = int(mapfloat(angle, -PI, PI, 0.0, float(IMAGE_WIDTH-1)));
+
   for (int led = 0; led < LEDS; led++) {
-    const float originX = IMAGE_WIDTH / 2;
-    const float originY = IMAGE_HEIGHT - 1;
-
-    const float hypotenuse = sqrt(originX*originX +
-                                  originY*originY);
-
-    int h = mapfloat(led, 0.0, float(LEDS), 0, hypotenuse);
-
-    int deltaX = cos(angle) * h;
-    int deltaY = sin(angle) * h;
-
-    // Lookup the pixel
-    int x = int(originX + deltaX);
-    int y = int(originY + deltaY);
-
-    if (led == 59) {
-      Serial.print(x);
-      Serial.print("\t");
-      Serial.println(y);
-    }
-
-    if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
-      rgb = {0, 0, 0};
-    } else {
-      int pixelIndex = x + y * IMAGE_WIDTH;
-      int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
-      memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
-    }
+    int pixelIndex = x + led * IMAGE_WIDTH;
+    int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
+    memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
     /* Serial.print(rgb.r); */
     /* Serial.print(", "); */
     /* Serial.print(rgb.g); */
@@ -117,7 +94,6 @@ void loop() {
     uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b);
     strip.setPixelColor(led, c);
   }
-  /* Serial.println("###"); */
 
   strip.show();
 }
