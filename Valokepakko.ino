@@ -47,7 +47,6 @@ void setup() {
   strip.setBrightness(32);
   // Initialize all pixels to 'off'
   strip.show();
-  Serial.begin(9600);
 }
 
 // Sensor reading when there is no tilt on the accelerometer.
@@ -70,15 +69,7 @@ void loop() {
 
   pulseX = pulseIn(ACCEL_X_PIN, HIGH);
   pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
-
   angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
-
-  /* Display result */
-  Serial.print(pulseX);
-  Serial.print("\t");
-  Serial.print(pulseY);
-  Serial.print("\t");
-  Serial.println(mapfloat(angle, -PI, PI, 0.0, 360.0));
 
   for (int led = 0; led < LEDS; led++) {
     const float originX = IMAGE_WIDTH / 2;
@@ -96,12 +87,6 @@ void loop() {
     int x = int(originX + deltaX);
     int y = int(originY + deltaY);
 
-    if (led == 59) {
-      Serial.print(x);
-      Serial.print("\t");
-      Serial.println(y);
-    }
-
     if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
       rgb = {0, 0, 0};
     } else {
@@ -109,15 +94,9 @@ void loop() {
       int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
       memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
     }
-    /* Serial.print(rgb.r); */
-    /* Serial.print(", "); */
-    /* Serial.print(rgb.g); */
-    /* Serial.print(", "); */
-    /* Serial.println(rgb.b); */
     uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b);
     strip.setPixelColor(led, c);
   }
-  /* Serial.println("###"); */
 
   strip.show();
 }
