@@ -58,6 +58,17 @@ float mapfloat(float x, float in_min, float in_max, float out_min, float out_max
  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+// Returns the color from the palette. Return black if pixelindex is -1.
+uint32_t lookupColor(int pixelIndex) {
+  if (pixelIndex < 0) {
+    rgb = {0, 0, 0};
+  } else {
+    int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
+    memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
+  }
+  uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b);
+}
+
 void loop() {
   /**********************/
   /* Accelerometer code */
@@ -83,18 +94,18 @@ void loop() {
     int deltaX = cos(angle) * h;
     int deltaY = sin(angle) * h;
 
-    // Lookup the pixel
+    /****************************/
+    /* Lookup the pixel's color */
+    /****************************/
     int x = int(originX + deltaX);
     int y = int(originY + deltaY);
-
+    int pixelIndex = x + y * IMAGE_WIDTH;
+    // If we are out of bounds set color to black
     if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
-      rgb = {0, 0, 0};
-    } else {
-      int pixelIndex = x + y * IMAGE_WIDTH;
-      int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
-      memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
+      pixelindex = -1;
     }
-    uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b);
+    uint32_t c = lookupColor(pixelIndex);
+
     strip.setPixelColor(led, c);
   }
 
