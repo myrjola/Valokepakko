@@ -8,6 +8,19 @@
   #include <avr/power.h>
 #endif
 
+/****************************************************/
+/* Here you choose which kind of interface is used. */
+/*                                                  */
+/* TIMER Timer based                                */
+/* TILT Orientation based                           */
+/* WHEEL Wheel rotation based                       */
+/*                                                  */
+/* Uncomment only ONE line at a time.               */
+/****************************************************/
+// #define TIMER;
+#define TILT;
+// #define WHEEL;
+
 const int LED_PIN = 6;
 
 // We use the Memsic 2125 Dual-axis Accelerometer.
@@ -69,20 +82,7 @@ uint32_t lookupColor(int pixelIndex) {
   uint32_t c = strip.Color(rgb.r, rgb.g, rgb.b);
 }
 
-void loop() {
-  /**********************/
-  /* Accelerometer code */
-  /**********************/
-
-  // variables to read the pulse widths:
-  int pulseX, pulseY;
-  float angle;
-
-  pulseX = pulseIn(ACCEL_X_PIN, HIGH);
-  pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
-  angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
-
-  for (int led = 0; led < LEDS; led++) {
+uint32_t tiltColorLookup(int led, float angle) {
     const float originX = IMAGE_WIDTH / 2;
     const float originY = IMAGE_HEIGHT - 1;
 
@@ -102,9 +102,32 @@ void loop() {
     int pixelIndex = x + y * IMAGE_WIDTH;
     // If we are out of bounds set color to black
     if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
-      pixelindex = -1;
+      pixelIndex = -1;
     }
     uint32_t c = lookupColor(pixelIndex);
+}
+
+void loop() {
+  /**********************/
+  /* Accelerometer code */
+  /**********************/
+
+  // variables to read the pulse widths:
+  int pulseX, pulseY;
+  float angle;
+
+  pulseX = pulseIn(ACCEL_X_PIN, HIGH);
+  pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
+  angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
+
+  /******************/
+  /* LED strip code */
+  /******************/
+
+  for (int led = 0; led < LEDS; led++) {
+#ifdef TILT
+    uint32_t c = tiltColorLookup(led, angle);
+#endif /* TILT */
 
     strip.setPixelColor(led, c);
   }
