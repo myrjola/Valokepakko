@@ -133,3 +133,12 @@ palette array with 256 colors, they can be referenced with one byte. So the
 image becomes an array of bytes, which reference the palette array. Now the
 storage requirement for one 60 \times 60 pixel image becomes
 src_calc{(60*60 + 3*256)/1024} kb.
+
+* Data gathering
+
+** Timer
+*** 20 millis 32 brightness 4 sec exposure
+
+Image too dim not as pronounced
+
+*** 40 millis 64 brightness
