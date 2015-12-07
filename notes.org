@@ -137,8 +137,41 @@ src_calc{(60*60 + 3*256)/1024} kb.
 * Data gathering
 
 ** Timer
-*** 20 millis 32 brightness 4 sec exposure
+*** 20 millis with wrapping 32 brightness 4 sec exposure
 
 Image too dim not as pronounced
 
-*** 40 millis 64 brightness
+*** 40 millis with wrapping 64 brightness 4 sec exposure
+
+These were good settings. next we switched to
+
+*** without wrapping and increased exposure to 10 seconds
+
+This gave good results
+
+** Official data gathering
+
+*** Yhteiset parametrit
+
+3 m kamerasta
+
+2.5 m kävelty matka
+
+18mm (matches about 30 mm standard)
+
+Panasonic Lumix DMC GM1
+
+Zoom objektiivi 12-32 mm
+
+Laskelmallinen kohinavaimennus (shutter noise reduction) pois päältä
+
+Aukko 11
+
+Kuva Naukio
+
+Adafruit valoisuus 64
+
+*** Ajastus
+
+20 ms sarakkeiden välillä
+

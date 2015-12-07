@@ -18,8 +18,8 @@
 /*                                                  */
 /* Uncomment only ONE line at a time.               */
 /****************************************************/
-#define TIMER
-/* #define TILT */
+/* #define TIMER */
+#define TILT
 /* #define WHEEL */
 
 const int LED_PIN = 6;
@@ -74,7 +74,7 @@ float mapfloat(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 // Returns the color from the palette. Return black if pixelindex is -1.
-uint32_t lookupColor(int pixelIndex) {
+uint32_t lookupColor(int pixelIndex, float brightnessFactor) {
   if (pixelIndex < 0 || pixelIndex >= IMAGE_SIZE) {
     rgb = {0, 0, 0};
   } else {
@@ -86,20 +86,25 @@ uint32_t lookupColor(int pixelIndex) {
     rgb = {0, 0, 0};
   }
 
-  return strip.Color(rgb.r, rgb.g, rgb.b);
+  return strip.Color(int(rgb.r * brightnessFactor),
+                     int(rgb.g * brightnessFactor),
+                     int(rgb.b * brightnessFactor));
 }
 
 // Lookup the pixel's color for the timer based interface.
 uint32_t timerColorLookup(int led, int frame) {
   if (frame > IMAGE_WIDTH) {
-    return lookupColor(-1);
+    return lookupColor(-1, 1.0);
   }
   int pixelIndex = frame + led * IMAGE_WIDTH;
-  return lookupColor(pixelIndex);
+  return lookupColor(pixelIndex, 1.0);
 }
 
 // Lookup the pixel's color for the tilt based interface.
 uint32_t tiltColorLookup(int led, float angle) {
+  // flip the led
+  led = LEDS - led;
+
   const float originX = IMAGE_WIDTH / 2;
   const float originY = IMAGE_HEIGHT - 1;
 
@@ -108,8 +113,8 @@ uint32_t tiltColorLookup(int led, float angle) {
 
   int h = mapfloat(led, 0.0, float(LEDS), 0, hypotenuse);
 
-  int deltaX = cos(angle) * h;
-  int deltaY = sin(angle) * h;
+  int deltaX = cos(angle + PI) * h;
+  int deltaY = sin(angle + PI) * h;
 
   int x = int(originX + deltaX);
   int y = int(originY + deltaY);
@@ -118,15 +123,20 @@ uint32_t tiltColorLookup(int led, float angle) {
   if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
     pixelIndex = -1;
   }
-  return lookupColor(pixelIndex);
+  return lookupColor(pixelIndex, 1.0);
 }
 
 // Lookup the pixel's color for the wheel based interface.
 uint32_t wheelColorLookup(int led, float angle) {
-  int x = int(mapfloat(angle, -PI, PI, 0.0, float(IMAGE_WIDTH-1)));
+  float maxAngle = IMAGE_WIDTH / float(IMAGE_HEIGHT) * 100 / 34;
+  int x = int(mapfloat(angle, -PI, maxAngle, 0.0, float(IMAGE_WIDTH-1)));
+
+  if (x >= IMAGE_WIDTH) {
+    return lookupColor(-1, 1.0);
+  }
 
   int pixelIndex = x + led * IMAGE_WIDTH;
-  return lookupColor(pixelIndex);
+  return lookupColor(pixelIndex, 1.0);
 }
 
 // Last tick for the timer based interface.
