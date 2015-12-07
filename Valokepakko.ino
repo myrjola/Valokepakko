@@ -19,9 +19,9 @@
 /*                                                  */
 /* Uncomment only ONE line at a time.               */
 /****************************************************/
-/* #define TIMER; */
-#define TILT;
-/* #define WHEEL; */
+#define TIMER
+/* #define TILT */
+/* #define WHEEL */
 
 const int LED_PIN = 6;
 
@@ -32,6 +32,7 @@ const int ACCEL_Y_PIN = 3;
 
 const int LEDS = 60;
 const int TIMEFRAME = 500;
+
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
 // Parameter 3 = pixel type flags, add together as needed:
@@ -83,15 +84,14 @@ uint32_t lookupColor(int pixelIndex) {
   }
   return strip.Color(rgb.r, rgb.g, rgb.b);
 }
-//Lookup the pixel's color for the timer based interface.
- uint32_t timerColorLookup(int led, int index) {
-    int x = mapfloat(led, 0.0, float(LEDS), index, float(IMAGE_WIDTH-1));
-    int y = led;    
-    int pixelIndex = x + led * IMAGE_WIDTH;
-    }
-    return lookUpColor(pixelIndex)
+
+// Lookup the pixel's color for the timer based interface.
+uint32_t timerColorLookup(int led, int frame) {
+  int pixelIndex = frame % IMAGE_WIDTH + led * IMAGE_WIDTH;
+  return lookupColor(pixelIndex);
 }
-  // Lookup the pixel's color for the tilt based interface.
+
+// Lookup the pixel's color for the tilt based interface.
 uint32_t tiltColorLookup(int led, float angle) {
     const float originX = IMAGE_WIDTH / 2;
     const float originY = IMAGE_HEIGHT - 1;
@@ -122,35 +122,44 @@ uint32_t wheelColorLookup(int led, float angle) {
     return lookupColor(pixelIndex);
 }
 
+// Last tick for the timer based interface.
+unsigned long lastTick = 0;
+
+// The frame (column) being shown for the timer based interface.
+int frame = 0;
+
 void loop() {
   /**********************/
   /* Accelerometer code */
   /**********************/
 
-  // variables to read the pulse widths:
-  int pulseX, pulseY;
-  float angle;
-
-  pulseX = pulseIn(ACCEL_X_PIN, HIGH);
-  pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
-  angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
+  int pulseX = pulseIn(ACCEL_X_PIN, HIGH);
+  int pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
+  float angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
 
   /******************/
   /* LED strip code */
   /******************/
 
+#ifdef TIMER
+  unsigned long time = millis();
+  if (time - lastTick > TIMEFRAME) {
+    frame++;
+    lastTick = time;
+  }
+#endif /* TIMER */
+
   for (int led = 0; led < LEDS; led++) {
     uint32_t c;
 
 #ifdef TIMER
-    int i = 0;
-    c = timer.setInterval(TIMEFRAME, timerColorLookup(led, i++));
-    noLoop();
+    c = timerColorLookup(led, frame);
+#endif /* TIMER */
 
-#endif /* TIMER */ 
 #ifdef TILT
     c = tiltColorLookup(led, angle);
 #endif /* TILT */
+
 #ifdef WHEEL
     c = wheelColorLookup(led, angle);
 #endif /* WHEEL */
