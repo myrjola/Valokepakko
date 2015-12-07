@@ -1,13 +1,12 @@
-
-
 #include <avr/pgmspace.h>
 #include <math.h>
 
+#include <Adafruit_NeoPixel.h>
+
 #include "image.h"
 
-#include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
-  #include <avr/power.h>
+#include <avr/power.h>
 #endif
 
 /****************************************************/
@@ -52,9 +51,9 @@ RGB rgb;
 
 void setup() {
   // This is for Trinket 5V 16MHz, you can remove these three lines if you are not using a Trinket
-  #if defined (__AVR_ATtiny85__)
-    if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
-  #endif
+#if defined (__AVR_ATtiny85__)
+  if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
+#endif
   // End of trinket special code
 
   strip.begin();
@@ -71,7 +70,7 @@ const int NO_TILT = 5000;
 // Same as the built in map function but for floats
 float mapfloat(float x, float in_min, float in_max, float out_min, float out_max)
 {
- return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 // Returns the color from the palette. Return black if pixelindex is -1.
@@ -93,33 +92,33 @@ uint32_t timerColorLookup(int led, int frame) {
 
 // Lookup the pixel's color for the tilt based interface.
 uint32_t tiltColorLookup(int led, float angle) {
-    const float originX = IMAGE_WIDTH / 2;
-    const float originY = IMAGE_HEIGHT - 1;
+  const float originX = IMAGE_WIDTH / 2;
+  const float originY = IMAGE_HEIGHT - 1;
 
-    const float hypotenuse = sqrt(originX*originX +
-                                  originY*originY);
+  const float hypotenuse = sqrt(originX*originX +
+                                originY*originY);
 
-    int h = mapfloat(led, 0.0, float(LEDS), 0, hypotenuse);
+  int h = mapfloat(led, 0.0, float(LEDS), 0, hypotenuse);
 
-    int deltaX = cos(angle) * h;
-    int deltaY = sin(angle) * h;
+  int deltaX = cos(angle) * h;
+  int deltaY = sin(angle) * h;
 
-    int x = int(originX + deltaX);
-    int y = int(originY + deltaY);
-    int pixelIndex = x + y * IMAGE_WIDTH;
-    // If we are out of bounds set color to black
-    if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
-      pixelIndex = -1;
-    }
-    return lookupColor(pixelIndex);
+  int x = int(originX + deltaX);
+  int y = int(originY + deltaY);
+  int pixelIndex = x + y * IMAGE_WIDTH;
+  // If we are out of bounds set color to black
+  if (x < 0 || x > IMAGE_WIDTH - 1 || y < 0 || y > IMAGE_HEIGHT - 1) {
+    pixelIndex = -1;
+  }
+  return lookupColor(pixelIndex);
 }
 
 // Lookup the pixel's color for the wheel based interface.
 uint32_t wheelColorLookup(int led, float angle) {
-    int x = int(mapfloat(angle, -PI, PI, 0.0, float(IMAGE_WIDTH-1)));
+  int x = int(mapfloat(angle, -PI, PI, 0.0, float(IMAGE_WIDTH-1)));
 
-    int pixelIndex = x + led * IMAGE_WIDTH;
-    return lookupColor(pixelIndex);
+  int pixelIndex = x + led * IMAGE_WIDTH;
+  return lookupColor(pixelIndex);
 }
 
 // Last tick for the timer based interface.
