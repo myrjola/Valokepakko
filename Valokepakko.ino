@@ -81,6 +81,11 @@ uint32_t lookupColor(int pixelIndex) {
     int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
     memcpy_PF(&rgb, (uint_farptr_t) &PALETTE[colorIndex], sizeof(RGB));
   }
+
+  if (rgb.r + rgb.g + rgb.b < 40) {
+    rgb = {0, 0, 0};
+  }
+
   return strip.Color(rgb.r, rgb.g, rgb.b);
 }
 
