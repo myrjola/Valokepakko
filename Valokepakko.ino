@@ -30,7 +30,7 @@ const int ACCEL_X_PIN = 2;
 const int ACCEL_Y_PIN = 3;
 
 const int LEDS = 60;
-const int TIMEFRAME = 500;
+const unsigned long TIMEFRAME = 20;
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -132,9 +132,11 @@ void loop() {
   /* Accelerometer code */
   /**********************/
 
+  #ifndef TIMER
   int pulseX = pulseIn(ACCEL_X_PIN, HIGH);
   int pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
   float angle = atan2(pulseX-NO_TILT, pulseY-NO_TILT);
+  #endif /* TIMER */
 
   /******************/
   /* LED strip code */
