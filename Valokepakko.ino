@@ -1,3 +1,5 @@
+
+
 #include <avr/pgmspace.h>
 #include <math.h>
 
@@ -29,7 +31,7 @@ const int ACCEL_X_PIN = 2;
 const int ACCEL_Y_PIN = 3;
 
 const int LEDS = 60;
-
+const int TIMEFRAME = 500;
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
 // Parameter 3 = pixel type flags, add together as needed:
@@ -81,8 +83,15 @@ uint32_t lookupColor(int pixelIndex) {
   }
   return strip.Color(rgb.r, rgb.g, rgb.b);
 }
-
-// Lookup the pixel's color for the tilt based interface.
+//Lookup the pixel's color for the timer based interface.
+ uint32_t timerColorLookup(int led, int index) {
+    int x = mapfloat(led, 0.0, float(LEDS), index, float(IMAGE_WIDTH-1));
+    int y = led;    
+    int pixelIndex = x + led * IMAGE_WIDTH;
+    }
+    return lookUpColor(pixelIndex)
+}
+  // Lookup the pixel's color for the tilt based interface.
 uint32_t tiltColorLookup(int led, float angle) {
     const float originX = IMAGE_WIDTH / 2;
     const float originY = IMAGE_HEIGHT - 1;
@@ -132,6 +141,13 @@ void loop() {
 
   for (int led = 0; led < LEDS; led++) {
     uint32_t c;
+
+#ifdef TIMER
+    int i = 0;
+    c = timer.setInterval(TIMEFRAME, timerColorLookup(led, i++));
+    noLoop();
+
+#endif /* TIMER */ 
 #ifdef TILT
     c = tiltColorLookup(led, angle);
 #endif /* TILT */
