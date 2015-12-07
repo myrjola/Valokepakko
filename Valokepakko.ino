@@ -30,7 +30,7 @@ const int ACCEL_X_PIN = 2;
 const int ACCEL_Y_PIN = 3;
 
 const int LEDS = 60;
-const unsigned long TIMEFRAME = 20;
+const unsigned long TIMEFRAME = 40;
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -59,7 +59,7 @@ void setup() {
   strip.begin();
 
   // Lower brightness so that Arduino can handle it.
-  strip.setBrightness(32);
+  strip.setBrightness(64);
   // Initialize all pixels to 'off'
   strip.show();
 }
@@ -75,7 +75,7 @@ float mapfloat(float x, float in_min, float in_max, float out_min, float out_max
 
 // Returns the color from the palette. Return black if pixelindex is -1.
 uint32_t lookupColor(int pixelIndex) {
-  if (pixelIndex < 0) {
+  if (pixelIndex < 0 || pixelIndex >= IMAGE_SIZE) {
     rgb = {0, 0, 0};
   } else {
     int colorIndex = pgm_read_byte_near(PIXELS + pixelIndex);
@@ -86,7 +86,10 @@ uint32_t lookupColor(int pixelIndex) {
 
 // Lookup the pixel's color for the timer based interface.
 uint32_t timerColorLookup(int led, int frame) {
-  int pixelIndex = frame % IMAGE_WIDTH + led * IMAGE_WIDTH;
+  if (frame > IMAGE_WIDTH) {
+    return lookupColor(-1);
+  }
+  int pixelIndex = frame + led * IMAGE_WIDTH;
   return lookupColor(pixelIndex);
 }
 
