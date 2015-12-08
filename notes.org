@@ -136,7 +136,7 @@ src_calc{(60*60 + 3*256)/1024} kb.
 
 * Data gathering
 
-** Timer
+** Testing parameters with timer
 *** 20 millis with wrapping 32 brightness 4 sec exposure
 
 Image too dim not as pronounced
@@ -167,7 +167,7 @@ Laskelmallinen kohinavaimennus (shutter noise reduction) pois päältä
 
 Aukko 11
 
-Kuva Naukio
+Kuva Naukio nimisestä kissasta
 
 Adafruit valoisuus 64
 
@@ -175,3 +175,11 @@ Adafruit valoisuus 64
 
 20 ms sarakkeiden välillä
 
+*** Tilt
+
+Ei tarvittu valoisuuden säätöä
+
+*** Pyörä
+
+Hauska bugi jossa kiihtyvyysanturi pyöri 180 astetta pinnan ympäri kun pyörää
+vieritettiin. Tämä johti peilattuun kuvaan, jota oli vaika vikaselvittää.
