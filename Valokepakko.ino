@@ -19,8 +19,8 @@
 /* Uncomment only ONE line at a time.               */
 /****************************************************/
 /* #define TIMER */
-#define TILT
-/* #define WHEEL */
+/* #define TILT */
+#define WHEEL
 
 const int LED_PIN = 6;
 
@@ -74,6 +74,8 @@ float mapfloat(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 // Returns the color from the palette. Return black if pixelindex is -1.
+// Multiply the resulting color with the brightnessFactor. This was not needed
+// after all.
 uint32_t lookupColor(int pixelIndex, float brightnessFactor) {
   if (pixelIndex < 0 || pixelIndex >= IMAGE_SIZE) {
     rgb = {0, 0, 0};
@@ -113,6 +115,7 @@ uint32_t tiltColorLookup(int led, float angle) {
 
   int h = mapfloat(led, 0.0, float(LEDS), 0, hypotenuse);
 
+  // Flip the angles for our tilt implementation.
   int deltaX = cos(angle + PI) * h;
   int deltaY = sin(angle + PI) * h;
 
@@ -128,10 +131,18 @@ uint32_t tiltColorLookup(int led, float angle) {
 
 // Lookup the pixel's color for the wheel based interface.
 uint32_t wheelColorLookup(int led, float angle) {
-  float maxAngle = IMAGE_WIDTH / float(IMAGE_HEIGHT) * 100 / 34;
-  int x = int(mapfloat(angle, -PI, maxAngle, 0.0, float(IMAGE_WIDTH-1)));
+  // Flip image
+  led = LEDS - led;
 
-  if (x >= IMAGE_WIDTH) {
+  // We had a 34 cm radius for the wheel. The image strip was 100 cm long. Then
+  // we needed to scale this according to the image aspect ratio. Otherwise this
+  // is just basic sector length formula angle = sectorlength/radius.
+  float maxAngle = IMAGE_WIDTH / float(IMAGE_HEIGHT) * 100 / 34;
+
+  // The angles needed a bit of calibration related to the wheel orientation.
+  int x = int(mapfloat(angle, -PI+PI/2, maxAngle-PI+PI/2, 0.0, float(IMAGE_WIDTH-1)));
+
+  if (x >= IMAGE_WIDTH || x < 0) {
     return lookupColor(-1, 1.0);
   }
 
@@ -150,6 +161,8 @@ void loop() {
   /* Accelerometer code */
   /**********************/
 
+  // The ifndef is needed because pulseIn expects PWM signal, without the
+  // accelerometer connected the loop function got called very slowly.
   #ifndef TIMER
   int pulseX = pulseIn(ACCEL_X_PIN, HIGH);
   int pulseY = pulseIn(ACCEL_Y_PIN, HIGH);
