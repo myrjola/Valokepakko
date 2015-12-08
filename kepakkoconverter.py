@@ -66,5 +66,6 @@ if __name__ == "__main__":
 
     img = resize_image(image_path)
     img_converted = reduce_palette(img)
+    img_converted.show()
 
     print_matrix(img_converted)
