@@ -1,7 +1,23 @@
 #+TITLE: Valokepakko notes
 
 These notes are best read on Github or [[http://orgmode.org/manual/HTML-Export-commands.html#HTML-Export-commands][exported to HTML with Emacs org-mode]].
-* Interfaces
+* Converting images for use in Valokepakko
+
+Install dependencies.
+
+#+BEGIN_SRC sh
+pip install -r requirements.txt
+#+END_SRC
+
+Run the image conversion.
+
+#+BEGIN_SRC sh
+./kepakkoconverter.py img/grin.png
+#+END_SRC
+
+Paste the output to the image.h file after the comment.
+
+* Interface brainstorming
 ** Button based interface
 
 1. Hold button
@@ -148,6 +164,12 @@ These were good settings. next we switched to
 *** without wrapping and increased exposure to 10 seconds
 
 This gave good results
+
+*** Changing to cat picture
+
+We noticed that our palette conversion sometimes didn't handle black quite well.
+It just became a very dark gray. To mitigate this we implemented a filter that
+converted very dark grayshades to black.
 
 ** Official data gathering
 
